@@ -1,0 +1,14 @@
+{
+  "name": "breakout_assignment3",
+  "version": "1.0.0",
+  "description": "CS5410",
+  "main": "gameLoop.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "caleb.yearsley@aggiemail.usu.edu",
+  "license": "ISC",
+  "dependencies": {
+    "bower": "^1.8.0"
+  }
+}
