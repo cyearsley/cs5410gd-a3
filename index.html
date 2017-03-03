@@ -6,6 +6,13 @@
     <script src="./bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <link href="./css/master.css" rel="stylesheet"></link>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <script src="./characters/characterMaster.js"></script>
+    <script src="./characters/ball.js"></script>
+    <script src="./characters/brick.js"></script>
+    <script src="./characters/paddle.js"></script>
+    <script src="./characters/sounds/soundsPool.js"></script>
+    <script src="./game/gameLoop.js"></script>
+    <script src="./scenes/MasterScene.js"></script>
   </head>
   <body>
     <div class="container canvas-container">
@@ -14,5 +21,14 @@
       </canvas>
     </div>
     </div>
+    <script>
+      var song = new Audio("static/sounds/music/song18.mp3");
+      song.load();
+      song.loop = true;
+      song.volume = .025;
+      // song.play();
+      var gl = new GameLoop();
+      gl.init();
+    </script>
   </body>
 </html>
