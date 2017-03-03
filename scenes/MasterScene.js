@@ -63,9 +63,9 @@ var MasterScene = function () {
 
     var scenes = {
         main: new sceneMain(),
-        pause: new scenePause(),
-        play: new scenePlay(),
-        hiscores: new sceneHiscores(),
+        pause: 'empty',
+        play: 'empty',
+        hiscores: 'empty',
         currentScene: 'main'
     };
 
