@@ -10,7 +10,7 @@
     <script src="./characters/ball.js"></script>
     <script src="./characters/brick.js"></script>
     <script src="./characters/paddle.js"></script>
-    <script src="./characters/sounds/soundsPool.js"></script>
+    <script src="./characters/sounds/soundPool.js"></script>
     <script src="./game/gameLoop.js"></script>
     <script src="./scenes/MasterScene.js"></script>
   </head>
@@ -22,13 +22,10 @@
     </div>
     </div>
     <script>
-      var song = new Audio("static/sounds/music/song18.mp3");
-      song.load();
-      song.loop = true;
-      song.volume = 0.15;
-      // song.play();
-      var gl = new GameLoop();
-      gl.init();
+      var SOUNDBOARD = new SoundPool();
+      var GAMELOOP = new GameLoop();
+      SOUNDBOARD.playSound({type: 'GameMusic', volume: 0.15, loop: true});
+      GAMELOOP.init();
     </script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-var characterMaster = function () {
+var CharacterMaster = function () {
 
 	var characterObj = {
 		ball: function (cData) {
@@ -13,6 +13,6 @@ var characterMaster = function () {
 	};
 
 	this.createCharacter = function (cData) {
-		return new characterObj[type](cData);
+		return new characterObj[cData.type](cData);
 	};
 };
