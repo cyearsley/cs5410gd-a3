@@ -19,6 +19,9 @@
 	margin: 10px auto;
 	/*padding: 0;*/
     display: block;
+    background-image: url("./../static/images/mask.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .canvas-container-side {
