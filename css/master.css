@@ -1,27 +1,27 @@
 * {
 	margin: 0;
 	padding: 0;
-	background-color: salmon;
+	background-color: black;
 }
 
 .canvas-container {
 	margin: 0 auto;
 	/*padding: 0;*/
 	width: 100%;
-	border: 1px solid green;
-	background-color: salmon;
+	/*border: 1px solid green;*/
+	/*background-color: salmon;*/
 }
 
 #canvas-main {
-	background-color: #000;
 	height: 700px;
 	width: 1300px;
 	margin: 10px auto;
-	/*padding: 0;*/
     display: block;
-    background-image: url("./../static/images/mask.jpg");
+    background-image: url("./../static/images/moon-background.png");
     background-repeat: no-repeat;
     background-position: center;
+    background-size: cover;
+	background-color: #000;
 }
 
 .canvas-container-side {
