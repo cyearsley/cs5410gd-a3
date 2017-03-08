@@ -16,7 +16,7 @@
   </head>
   <body>
     <div class="container canvas-container">
-      <canvas id="canvas-main" width=1300 height=700>
+      <canvas id="canvas-main">
         Your browser does not support HTML5!
       </canvas>
     </div>
@@ -24,7 +24,7 @@
     <script>
       var SOUNDBOARD = new SoundPool();
       var GAMELOOP = new GameLoop();
-      SOUNDBOARD.playSound({type: 'GameMusic', volume: 0.15, loop: true});
+      // SOUNDBOARD.playSound({type: 'GameMusic', volume: 0.15, loop: true});
       GAMELOOP.init();
     </script>
   </body>

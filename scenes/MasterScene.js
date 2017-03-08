@@ -16,7 +16,7 @@ var MasterScene = function () {
     this.init = function () {
         context.clearRect(0, 0, canvas.width, canvas.height);
     };
-    this.beginRender = function () {
+    function beginRender () {
         context.clear();
     };
     // ======================================================= //
@@ -26,9 +26,19 @@ var MasterScene = function () {
         this.init = function () {
 
         };
-        this.renderScene = function () {};
-        this.updateScene = function () {};
-        this.handleInputScene = function () {console.log("handle input")};
+        this.renderScene = function () {
+            for (index in characters) {
+                characters[index].render(context);
+            }
+        };
+        this.updateScene = function () {
+            for (index in characters) {
+                characters[index].update();
+            }
+        };
+        this.handleInputScene = function () {
+            console.log("handle input")
+        };
     };
 
     var scenePause = function () {
@@ -71,6 +81,7 @@ var MasterScene = function () {
 
     this.render = function () {
         // Render the scene, and all the characters in it.
+        beginRender();
         for (key in scenes) {
             if (scenes[key] && key != 'currentScene') {
                 if (key === scenes.currentScene) {
