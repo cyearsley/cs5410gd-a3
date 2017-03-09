@@ -14,13 +14,16 @@ var CharacterMaster = function () {
 			image: createImage('static/images/btb-text.png')
 		},
 		'start': {
-			image: createImage('static/images/start-text.png')
+			image: createImage('static/images/start-text.png'),
+			imageAlt: createImage('static/images/start-text-selected.png')
 		},
 		'highscores': {
-			image: createImage('static/images/highscores-text.png')
+			image: createImage('static/images/highscores-text.png'),
+			imageAlt: createImage('static/images/highscores-text-selected.png')
 		},
 		'options': {
-			image: createImage('static/images/options-text.png')
+			image: createImage('static/images/options-text.png'),
+			imageAlt: createImage('static/images/options-text-selected.png')
 		}
 	};
 
@@ -36,28 +39,63 @@ var CharacterMaster = function () {
 		},
 		text: function (_data) {
 			var validButtonNames = ['start', 'exit', 'credits', 'highscores', 'options', 'resume', 'btb'];
-
-			this.dimension = {
-				center: {
-					x: Math.floor(characterImages[_data.imageText].width/2),
-					y: Math.floor(characterImages[_data.imageText].height/2)
-				},
-				width: characterImages[_data.imageText].width,
-				height: characterImages[_data.imageText].height
+			var mousePosition = {
+				x: undefined,
+				y: undefined
 			};
-			this.position = {
+
+			var dimensions = {
+				loaded_p: false
+			};
+
+			var position = {
 				x: _data.x,
 				y: _data.y
 			};
 
-			this.update = function () {
-				
+			var isHover_p = false;
+
+			this.update = function (x, y) {
+				mousePosition.x = x;
+				mousePosition.y = y;
+			};
+
+			this.handleClick = function () {
+				if (isHover_p) {
+					return _data.imageText;
+				}
+				return false;
 			};
 
 			this.render = function (context) {
 				if (characterImages[_data.imageText].image.isReady_p) {
 					context.save();
-					context.drawImage(characterImages[_data.imageText].image, this.position.x-(characterImages[_data.imageText].image.width*(function () {if(_data.alignCenter) return 0.5; return 0;}())), this.position.y);
+
+					if (!dimensions.loaded_p) {
+						dimensions.loaded_p = true;
+						dimensions.ytop = position.y*1.2;
+						dimensions.ybottom = position.y*1.2 + characterImages[_data.imageText].image.height;
+						dimensions.xleft = position.x - characterImages[_data.imageText].image.width/2;
+						dimensions.xright = position.x + characterImages[_data.imageText].image.width/2;
+					}
+
+					if (mousePosition.x >= dimensions.xleft && 
+						mousePosition.x <= dimensions.xright && 
+						mousePosition.y >= dimensions.ytop && 
+						mousePosition.y <= dimensions.ybottom &&
+						_data.textType === 'button' &&
+						characterImages[_data.imageText].imageAlt.isReady_p) {
+						if (!isHover_p) {
+							SOUNDBOARD.playSound({type: 'menuSelect', volume: 0.1, loop: false});
+						}
+						isHover_p = true;
+						context.drawImage(characterImages[_data.imageText].imageAlt, position.x - characterImages[_data.imageText].image.width/2+3, position.y+3);
+						// context.drawImage(characterImages[_data.imageText].imageAlt, position.x-(characterImages[_data.imageText].image.width*(function () {if(_data.alignCenter) return 0.5; return 0;}())), position.y);
+					}
+					else {
+						isHover_p = false;
+						context.drawImage(characterImages[_data.imageText].image, position.x-(characterImages[_data.imageText].image.width*(function () {if(_data.alignCenter) return 0.5; return 0;}())), position.y);
+					}
 					context.restore();
 				}
 			};

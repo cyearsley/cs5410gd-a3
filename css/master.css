@@ -6,10 +6,7 @@
 
 .canvas-container {
 	margin: 0 auto;
-	/*padding: 0;*/
 	width: 100%;
-	/*border: 1px solid green;*/
-	/*background-color: salmon;*/
 }
 
 #canvas-main {
@@ -17,7 +14,6 @@
 	width: 1300px;
 	margin: 10px auto;
     display: block;
-    background-image: url("./../static/images/moon-background.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -27,6 +23,5 @@
 .canvas-container-side {
 	background-color: green;
 	height: 600px;
-	/*width: 100%;*/
 	margin: 10px 0;
 }

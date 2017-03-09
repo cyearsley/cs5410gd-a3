@@ -1,7 +1,9 @@
 var SoundPool = function () {
 
 	var soundCache = {
-		GameMusic: new Audio('static/sounds/music/song18.mp3')
+		GameMusic: new Audio('static/sounds/music/song18.mp3'),
+		menuSelect: new Audio('static/sounds/SFX/menu-select.wav'),
+		menuChoose: new Audio('static/sounds/SFX/complete.ogg')
 	};
 
 	// Load the sounds
@@ -10,7 +12,6 @@ var SoundPool = function () {
 	}
 
 	this.playSound = function (data) {
-		console.log(window.location.pathname)
 		data = $.extend({
 			volume: .5,
 			loop: false
