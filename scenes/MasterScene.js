@@ -69,7 +69,6 @@ var MasterScene = function () {
             }
         };
         this.updateScene = function (timestamp) {
-            context.globalAlpha += 0.01;
             for (index in characters) {
                 characters[index].update(mousePosition.x, mousePosition.y);
             }
@@ -79,7 +78,13 @@ var MasterScene = function () {
                 if (clickingObj.hasClicked_p) {
                     var response = characters[index].handleClick();
                     if (response) {
-                        SOUNDBOARD.playSound({type: 'menuChoose', volume: 0.25, loop: false});
+                        if (characters[index].imageText === 'start') {
+                            SOUNDBOARD.playSound({type: 'startPlay', volume: 0.25, loop: false});
+                        }
+                        else {
+                            SOUNDBOARD.playSound({type: 'selectOption', volume: 0.25, loop: false});
+                        }
+                        context.globalAlpha = 0;
                     }
                     if (response == 'start') {
                         scenes.play = new scenePlay();
@@ -181,6 +186,9 @@ var MasterScene = function () {
     };
 
     this.update = function () {
+        if (context.globalAlpha < 1.1) {
+            context.globalAlpha += 0.025;
+        }
         // Update the scene, and all the characters in it.
         for (key in scenes) {
             if (scenes[key] && key != 'currentScene') {

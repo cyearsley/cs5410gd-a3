@@ -55,6 +55,8 @@ var CharacterMaster = function () {
 
 			var isHover_p = false;
 
+			this.imageText = _data.imageText;
+
 			this.update = function (x, y) {
 				mousePosition.x = x;
 				mousePosition.y = y;
@@ -89,7 +91,7 @@ var CharacterMaster = function () {
 							SOUNDBOARD.playSound({type: 'menuSelect', volume: 0.1, loop: false});
 						}
 						isHover_p = true;
-						context.drawImage(characterImages[_data.imageText].imageAlt, position.x - characterImages[_data.imageText].image.width/2+3, position.y+3);
+						context.drawImage(characterImages[_data.imageText].imageAlt, position.x - characterImages[_data.imageText].image.width/2, position.y);
 						// context.drawImage(characterImages[_data.imageText].imageAlt, position.x-(characterImages[_data.imageText].image.width*(function () {if(_data.alignCenter) return 0.5; return 0;}())), position.y);
 					}
 					else {

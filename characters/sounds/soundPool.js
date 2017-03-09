@@ -3,7 +3,8 @@ var SoundPool = function () {
 	var soundCache = {
 		GameMusic: new Audio('static/sounds/music/song18.mp3'),
 		menuSelect: new Audio('static/sounds/SFX/menu-select.wav'),
-		menuChoose: new Audio('static/sounds/SFX/complete.ogg')
+		startPlay: new Audio('static/sounds/SFX/complete.ogg'),
+		selectOption: new Audio('static/sounds/SFX/button1.ogg')
 	};
 
 	// Load the sounds
