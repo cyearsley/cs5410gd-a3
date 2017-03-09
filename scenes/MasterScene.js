@@ -7,6 +7,7 @@ var MasterScene = function () {
     // ======================================================= //
     var canvas = $('#canvas-main')[0];
     var context = canvas.getContext('2d');
+    console.log("canvas width: ", canvas.width);
     CanvasRenderingContext2D.prototype.clear = function() {
         this.save();
         this.setTransform(1, 0, 0, 1, 0, 0);
@@ -22,7 +23,12 @@ var MasterScene = function () {
     // ======================================================= //
 
     var sceneMain = function () {
-        var characters = [];
+        var characters = [
+            CM.createCharacter({type: 'text', name: 'testing', textType: 'button', imageText: 'start', x: canvas.width/2, y: 200, alignCenter: true}),
+            CM.createCharacter({type: 'text', name: 'testing2', textType: 'logo', imageText: 'btb', x: canvas.width/2, y: 50, alignCenter: true}),
+            CM.createCharacter({type: 'text', name: 'testing2', textType: 'button', imageText: 'highscores', x: canvas.width/2, y: 325, alignCenter: true}),
+            CM.createCharacter({type: 'text', name: 'testing2', textType: 'button', imageText: 'options', x: canvas.width/2, y: 450, alignCenter: true})
+        ];
         this.init = function () {
 
         };
@@ -37,7 +43,7 @@ var MasterScene = function () {
             }
         };
         this.handleInputScene = function () {
-            console.log("handle input")
+            // console.log("handle input")
         };
     };
 

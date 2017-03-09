@@ -16,15 +16,16 @@
   </head>
   <body>
     <div class="container canvas-container">
-      <canvas id="canvas-main">
+      <canvas id="canvas-main" width=1300 height=600>
         Your browser does not support HTML5!
       </canvas>
     </div>
     </div>
     <script>
       var SOUNDBOARD = new SoundPool();
+      var CM = new CharacterMaster()
       var GAMELOOP = new GameLoop();
-      // SOUNDBOARD.playSound({type: 'GameMusic', volume: 0.15, loop: true});
+      SOUNDBOARD.playSound({type: 'GameMusic', volume: 0.5, loop: true});
       GAMELOOP.init();
     </script>
   </body>
