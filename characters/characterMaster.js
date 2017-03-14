@@ -24,19 +24,83 @@ var CharacterMaster = function () {
 		'options': {
 			image: createImage('static/images/options-text.png'),
 			imageAlt: createImage('static/images/options-text-selected.png')
+		},
+		'brick-yellow': {
+			image: createImage('static/images/brick-yellow.png')
+		},
+		'brick-orange': {
+			image: createImage('static/images/brick-orange.png')
+		},
+		'brick-blue': {
+			image: createImage('static/images/brick-blue.png')
+		},
+		'brick-green': {
+			image: createImage('static/images/brick-green.png')
 		}
 	};
 
 	var CharacterObj = {
+		//============================================================// B A L L
 		ball: function (data) {
 			this.type = data.type;
 		},
+
+		//============================================================// B R I C K
 		brick: function (data) {
-			this.type = data.type;
+			var _data = {
+				brickType: data.brickType,
+				isActive_p: true,
+				position: {
+					x: data.x,
+					y: data.y
+				}
+			};
+			var dimensions = {
+				loaded_p: false,
+				brickHeight: (data.canvasWidth/14)*.3,
+				brickWidth: data.canvasWidth/15,
+				ytop: undefined,
+				ybottom: undefined,
+				xleft: undefined,
+				xright: undefined
+			};
+
+			this.getBrickType = function () {
+				return _data.brickType;
+			};
+			this.getActiveState = function () {
+				return _data.isActive_p;
+			};
+
+			this.update = function (ballData) {
+
+			};
+
+			this.render = function (context, canvasWidth, columnIndex, rowIndex) {
+				if (characterImages['brick-' + _data.brickType].image.isReady_p) {
+					context.save();
+
+					if (!dimensions.loaded_p) {
+						dimensions.loaded_p = true;
+						dimensions.ytop = _data.position.y;
+						dimensions.ybottom = _data.position.y + dimensions.brickHeight;
+						dimensions.xleft = _data.position.x;
+						dimensions.xright = _data.position.x + dimensions.brickWidth;
+					}
+
+					context.drawImage(characterImages['brick-' + _data.brickType].image, _data.position.x, _data.position.y, dimensions.brickWidth, dimensions.brickHeight);
+
+					context.restore();
+				}
+			};
 		},
+
+		//============================================================// P A D D L E
 		paddle: function (data) {
 			this.type = data.type;
 		},
+
+		//============================================================// T E X T
 		text: function (_data) {
 			var validButtonNames = ['start', 'exit', 'credits', 'highscores', 'options', 'resume', 'btb'];
 			var mousePosition = {
@@ -75,8 +139,8 @@ var CharacterMaster = function () {
 
 					if (!dimensions.loaded_p) {
 						dimensions.loaded_p = true;
-						dimensions.ytop = position.y*1.2;
-						dimensions.ybottom = position.y*1.2 + characterImages[_data.imageText].image.height;
+						dimensions.ytop = position.y;
+						dimensions.ybottom = position.y + characterImages[_data.imageText].image.height;
 						dimensions.xleft = position.x - characterImages[_data.imageText].image.width/2;
 						dimensions.xright = position.x + characterImages[_data.imageText].image.width/2;
 					}
@@ -105,7 +169,7 @@ var CharacterMaster = function () {
 	};
 
 	this.createCharacter = function (data) {
-		if (!data.type || !data.name) {
+		if (!data.type) {
 			console.error("You need to specify a type/name for the newly created character" + (()=>{if(data.name) return ' named: ' + data.name; else return '!';}))
 			return;
 		}

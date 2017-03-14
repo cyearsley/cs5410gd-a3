@@ -110,6 +110,7 @@ var MasterScene = function () {
     // ======================================================= //
     var scenePause = function () {
         var characters = [];
+        // create the characters
         this.init = function () {
 
         };
@@ -125,10 +126,39 @@ var MasterScene = function () {
     // ======================================================= //
     var scenePlay = function () {
         var characters = [];
+        for (let ii = 0; ii < 8; ii += 1) {
+            for (let jj = 0; jj < 14; jj += 1) {
+                let xPos = (canvas.width/14)*jj+3;
+                let rowMult;
+                if (ii == 0 || ii%2 == 0) {
+                    rowMult = 0;
+                }
+                else {
+                    rowMult = (canvas.width/14)*.37;
+                }
+                if (ii >= 6) {
+                    characters.push(CM.createCharacter({type: 'brick', brickType: 'green', x: xPos, y: 10*.8+rowMult, canvasWidth: canvas.width}));
+                }
+                else if (ii >= 4) {
+                    characters.push(CM.createCharacter({type: 'brick', brickType: 'blue', x: xPos, y: 60*.8+rowMult+(canvas.width/14)*.3, canvasWidth: canvas.width}));
+                }
+                else if (ii >= 2) {
+                    characters.push(CM.createCharacter({type: 'brick', brickType: 'orange', x: xPos, y: 110*.8+rowMult+(canvas.width/14)*.3*2, canvasWidth: canvas.width}));
+                }
+                else {
+                    characters.push(CM.createCharacter({type: 'brick', brickType: 'yellow', x: xPos, y: 160*.8+rowMult+(canvas.width/14)*.3*3, canvasWidth: canvas.width}));
+                }
+            }
+        }
+        // push the ball, push the bar.
         this.init = function () {
 
         };
-        this.renderScene = function () {};
+        this.renderScene = function () {
+            for (index in characters) {
+                characters[index].render(context, canvas.width);
+            }
+        };
         this.updateScene = function () {console.log("updating play")};
         this.handleInputScene = function () {};
     };
