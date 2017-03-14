@@ -36,6 +36,21 @@ var CharacterMaster = function () {
 		},
 		'brick-green': {
 			image: createImage('static/images/brick-green.png')
+		},
+		'paddle': {
+			image: createImage('static/images/paddle.png')
+		},
+		'go': {
+			image: createImage('static/images/go-text.png')
+		},
+		'three': {
+			image: createImage('static/images/three-text.png')
+		},
+		'two': {
+			image: createImage('static/images/two-text.png')
+		},
+		'one': {
+			image: createImage('static/images/one-text.png')
 		}
 	};
 
@@ -97,12 +112,57 @@ var CharacterMaster = function () {
 
 		//============================================================// P A D D L E
 		paddle: function (data) {
-			this.type = data.type;
+			var dimensions = {
+				loaded_p: false,
+				paddleHeight: (data.canvasWidth/14)*.3,
+				paddleWidth: 175,
+				ytop: undefined,
+				ybottom: undefined,
+				xleft: undefined,
+				xright: undefined
+			};
+			var _data = {
+				position: {
+					x: data.x - (dimensions.paddleWidth/2),
+					y: data.y
+				}
+			};
+
+			this.update = function (updateData) {
+				if (_data.position.x + dimensions.paddleWidth < updateData.canvasWidth) {
+					if (updateData.right) {
+						_data.position.x += 20;
+					}
+				}
+				if (_data.position.x > 0) {
+					if (updateData.left) {
+						_data.position.x -= 20;
+					}
+				}
+			};
+
+			this.render = function (context, canvasWidth) {
+				if (characterImages['paddle'].image.isReady_p) {
+					context.save();
+
+					if (!dimensions.loaded_p) {
+						dimensions.loaded_p = true;
+						dimensions.ytop = _data.position.y;
+						dimensions.ybottom = _data.position.y + dimensions.brickHeight;
+						dimensions.xleft = _data.position.x;
+						dimensions.xright = _data.position.x + dimensions.brickWidth;
+					}
+
+					context.drawImage(characterImages['paddle'].image, _data.position.x, _data.position.y, dimensions.paddleWidth, dimensions.paddleHeight);
+
+					context.restore();
+				}
+			};
 		},
 
 		//============================================================// T E X T
 		text: function (_data) {
-			var validButtonNames = ['start', 'exit', 'credits', 'highscores', 'options', 'resume', 'btb'];
+			var validButtonNames = ['start', 'exit', 'credits', 'highscores', 'options', 'resume', 'btb', 'go', 'three', 'two', 'one'];
 			var mousePosition = {
 				x: undefined,
 				y: undefined

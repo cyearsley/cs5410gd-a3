@@ -6,15 +6,15 @@ var GameLoop = function () {
     };
 
     function _gameLoop (timestamp) {
-        _update();
+        _update(timestamp);
         sceneControl.handleInput();
         _render();
 
         window.requestAnimationFrame(_gameLoop);
     }
 
-    function _update () {
-        sceneControl.update();
+    function _update (timestamp) {
+        sceneControl.update(timestamp);
     }
 
     function _render () {

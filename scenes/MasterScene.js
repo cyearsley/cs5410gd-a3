@@ -50,6 +50,7 @@ var MasterScene = function () {
             x: undefined,
             y: undefined
         };
+        var currentTimestamp = undefined;
         canvas.addEventListener('mousemove', function(evt) {
             var rect = canvas.getBoundingClientRect();
             mousePosition.x = evt.clientX - rect.left;
@@ -69,6 +70,7 @@ var MasterScene = function () {
             }
         };
         this.updateScene = function (timestamp) {
+            currentTimestamp = timestamp;
             for (index in characters) {
                 characters[index].update(mousePosition.x, mousePosition.y);
             }
@@ -87,7 +89,7 @@ var MasterScene = function () {
                         context.globalAlpha = 0;
                     }
                     if (response == 'start') {
-                        scenes.play = new scenePlay();
+                        scenes.play = new scenePlay(currentTimestamp);
                         scenes.currentScene = 'play';
                     }
                     else if (response == 'highscores') {
@@ -124,9 +126,45 @@ var MasterScene = function () {
     // P L A Y - S C E N E
     //
     // ======================================================= //
-    var scenePlay = function () {
+    var scenePlay = function (initialTimestamp) {
         var characters = [];
+        characters.paddle = CM.createCharacter({type: 'paddle', x: canvas.width/2, y: 650, canvasWidth: canvas.width})
+        var timeElapsed = 0;
+        var totalTimeElapsed = 0;
+        var isPlaying_p = false;
+        var countDownTimer = {
+            'go': CM.createCharacter({type: 'text', textType: 'label', imageText: 'go', x: canvas.width/2, y: 180, alignCenter: true}),
+            'three': CM.createCharacter({type: 'text', textType: 'label', imageText: 'three', x: canvas.width/2, y: 200, alignCenter: true}),
+            'two': CM.createCharacter({type: 'text', textType: 'label', imageText: 'two', x: canvas.width/2, y: 200, alignCenter: true}),
+            'one': CM.createCharacter({type: 'text', textType: 'label', imageText: 'one', x: canvas.width/2, y: 200, alignCenter: true})
+        };
+        var controlsData = {
+            'ArrowLeft': {
+                pressed: false
+            },
+            'ArrowRight': {
+                pressed: false
+            }
+        };
+
+        window.addEventListener('keydown', function (event) {
+            if (isPlaying_p) {
+                if (controlsData[event.key] && controlsData[event.key].pressed == false) {
+                    controlsData[event.key].pressed = true;
+                }
+            }
+        });
+
+        window.addEventListener('keyup', function (event) {
+            if (isPlaying_p) {
+                if (controlsData[event.key] && controlsData[event.key].pressed == true) {
+                    controlsData[event.key].pressed = false;
+                }
+            }
+        });
+
         for (let ii = 0; ii < 8; ii += 1) {
+            characters.push([]);
             for (let jj = 0; jj < 14; jj += 1) {
                 let xPos = (canvas.width/14)*jj+3;
                 let rowMult;
@@ -137,30 +175,67 @@ var MasterScene = function () {
                     rowMult = (canvas.width/14)*.37;
                 }
                 if (ii >= 6) {
-                    characters.push(CM.createCharacter({type: 'brick', brickType: 'green', x: xPos, y: 10*.8+rowMult, canvasWidth: canvas.width}));
+                    characters[ii].push(CM.createCharacter({type: 'brick', brickType: 'green', x: xPos, y: 10*.8+rowMult, canvasWidth: canvas.width}));
                 }
                 else if (ii >= 4) {
-                    characters.push(CM.createCharacter({type: 'brick', brickType: 'blue', x: xPos, y: 60*.8+rowMult+(canvas.width/14)*.3, canvasWidth: canvas.width}));
+                    characters[ii].push(CM.createCharacter({type: 'brick', brickType: 'blue', x: xPos, y: 60*.8+rowMult+(canvas.width/14)*.3, canvasWidth: canvas.width}));
                 }
                 else if (ii >= 2) {
-                    characters.push(CM.createCharacter({type: 'brick', brickType: 'orange', x: xPos, y: 110*.8+rowMult+(canvas.width/14)*.3*2, canvasWidth: canvas.width}));
+                    characters[ii].push(CM.createCharacter({type: 'brick', brickType: 'orange', x: xPos, y: 110*.8+rowMult+(canvas.width/14)*.3*2, canvasWidth: canvas.width}));
                 }
                 else {
-                    characters.push(CM.createCharacter({type: 'brick', brickType: 'yellow', x: xPos, y: 160*.8+rowMult+(canvas.width/14)*.3*3, canvasWidth: canvas.width}));
+                    characters[ii].push(CM.createCharacter({type: 'brick', brickType: 'yellow', x: xPos, y: 160*.8+rowMult+(canvas.width/14)*.3*3, canvasWidth: canvas.width}));
                 }
             }
         }
-        // push the ball, push the bar.
-        this.init = function () {
 
+        this.resetInstance = function (newTimeStamp) {
+            isPlaying_p = false;
+            initialTimestamp = newTimeStamp;
         };
+
         this.renderScene = function () {
-            for (index in characters) {
-                characters[index].render(context, canvas.width);
+            // for (index in characters) {
+            //     characters[index].render(context, canvas.width);
+            // }
+            for (let ii = 0; ii < characters.length; ii += 1) {
+                for (let jj = 0; jj < characters[0].length; jj += 1) {
+                    characters[ii][jj].render(context, canvas.width);
+                }
+            }
+            characters.paddle.render(context, canvas.width);
+            if (!isPlaying_p) {
+                if (timeElapsed > 1000 && timeElapsed < 2000) {
+                    countDownTimer.three.render(context);
+                }
+                else if (timeElapsed > 1000 && timeElapsed < 3000) {
+                    countDownTimer.two.render(context);
+                }
+                else if (timeElapsed > 1000 && timeElapsed < 4000) {
+                    countDownTimer.one.render(context);
+                }
+                else if (timeElapsed > 1000 && timeElapsed < 5000) {
+                    countDownTimer.go.render(context);
+                }
+                else if (timeElapsed > 1000) {
+                    isPlaying_p = true;
+                }
+            }
+            else {
+
             }
         };
-        this.updateScene = function () {console.log("updating play")};
-        this.handleInputScene = function () {};
+        this.updateScene = function (newTimeStamp) {
+            timeElapsed = newTimeStamp - initialTimestamp;
+            totalTimeElapsed = newTimeStamp - totalTimeElapsed;
+            if (isPlaying_p) {
+                characters.paddle.update({canvasWidth: canvas.width, left: controlsData.ArrowLeft.pressed, right: controlsData.ArrowRight.pressed})
+
+            }
+        };
+        this.handleInputScene = function () {
+
+        };
     };
 
     // ======================================================= //
@@ -215,7 +290,7 @@ var MasterScene = function () {
         }
     };
 
-    this.update = function () {
+    this.update = function (timestamp) {
         if (context.globalAlpha < 1.1) {
             context.globalAlpha += 0.025;
         }
@@ -223,7 +298,7 @@ var MasterScene = function () {
         for (key in scenes) {
             if (scenes[key] && key != 'currentScene') {
                 if (key === scenes.currentScene) {
-                    scenes[key].updateScene();
+                    scenes[key].updateScene(timestamp);
                 }
             }
         }
