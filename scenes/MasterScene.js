@@ -132,6 +132,7 @@ var MasterScene = function () {
         var timeElapsed = 0;
         var totalTimeElapsed = 0;
         var isPlaying_p = false;
+        var resetScene_p = false;
         var countDownTimer = {
             'go': CM.createCharacter({type: 'text', textType: 'label', imageText: 'go', x: canvas.width/2, y: 180, alignCenter: true}),
             'three': CM.createCharacter({type: 'text', textType: 'label', imageText: 'three', x: canvas.width/2, y: 200, alignCenter: true}),
@@ -148,18 +149,31 @@ var MasterScene = function () {
         };
 
         window.addEventListener('keydown', function (event) {
-            if (isPlaying_p) {
-                if (controlsData[event.key] && controlsData[event.key].pressed == false) {
-                    controlsData[event.key].pressed = true;
+            if (scenes.currentScene === 'play') {
+                if (isPlaying_p && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+                    if (controlsData[event.key] && controlsData[event.key].pressed == false) {
+                        controlsData[event.key].pressed = true;
+                    }
                 }
             }
         });
 
         window.addEventListener('keyup', function (event) {
-            if (isPlaying_p) {
-                if (controlsData[event.key] && controlsData[event.key].pressed == true) {
-                    controlsData[event.key].pressed = false;
+            if (scenes.currentScene === 'play') {
+                if (isPlaying_p && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+                    if (controlsData[event.key] && controlsData[event.key].pressed == true) {
+                        controlsData[event.key].pressed = false;
+                    }
                 }
+                else if (event.key === 'Escape') {
+                    resetScene_p = true;
+                    SOUNDBOARD.playSound({type: 'selectOption', volume: 0.5, loop: false});
+                    scenes.currentScene = 'pause';
+                }
+            }
+            else if (event.key === 'Escape' && scenes.currentScene === 'pause') {
+                scenes.currentScene = 'play';
+                SOUNDBOARD.playSound({type: 'goBack', volume: 0.5, loop: false});
             }
         });
 
@@ -189,21 +203,27 @@ var MasterScene = function () {
             }
         }
 
-        this.resetInstance = function (newTimeStamp) {
-            isPlaying_p = false;
+        this.resetScene = function (newTimeStamp) {
             initialTimestamp = newTimeStamp;
+            timeElapsed = 0;
+            isPlaying_p = false;
+            resetScene_p = false;
+            controlsData.ArrowRight.pressed = false;
+            controlsData.ArrowLeft.pressed = false;
         };
 
         this.renderScene = function () {
-            // for (index in characters) {
-            //     characters[index].render(context, canvas.width);
-            // }
+            // render the bricks
             for (let ii = 0; ii < characters.length; ii += 1) {
                 for (let jj = 0; jj < characters[0].length; jj += 1) {
                     characters[ii][jj].render(context, canvas.width);
                 }
             }
+
+            // render the paddle
             characters.paddle.render(context, canvas.width);
+
+            // render the countdown
             if (!isPlaying_p) {
                 if (timeElapsed > 1000 && timeElapsed < 2000) {
                     countDownTimer.three.render(context);
@@ -221,16 +241,15 @@ var MasterScene = function () {
                     isPlaying_p = true;
                 }
             }
-            else {
-
-            }
         };
         this.updateScene = function (newTimeStamp) {
+            if (resetScene_p) {
+                this.resetScene(newTimeStamp);
+            }
             timeElapsed = newTimeStamp - initialTimestamp;
             totalTimeElapsed = newTimeStamp - totalTimeElapsed;
             if (isPlaying_p) {
                 characters.paddle.update({canvasWidth: canvas.width, left: controlsData.ArrowLeft.pressed, right: controlsData.ArrowRight.pressed})
-
             }
         };
         this.handleInputScene = function () {
@@ -270,7 +289,7 @@ var MasterScene = function () {
 
     var scenes = {
         main: new sceneMain(),
-        pause: 'empty',
+        pause: new scenePause(),
         play: 'empty',
         hiscores: 'empty',
         options: new sceneOptions(),
