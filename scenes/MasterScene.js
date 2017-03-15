@@ -152,25 +152,39 @@ var MasterScene = function () {
 
         function generateCollisionList() {
             possibleCollisionList = [];
-            for (let ii = 0; ii < characters.length; ii += 1) {
-                for (let jj = 0; jj < characters[0].length; jj += 1) {
-                    if (ii === characters.length - 1 && characters[ii][jj].activeState()) {
-                        possibleCollisionList.push({ii: ii, jj: jj});
-                    }
-                    else {
-                        if (
-                            (characters[ii][jj-1] && !characters[ii][jj-1].activeState()) ||
-                            (characters[ii][jj+1] && !characters[ii][jj+1].activeState()) ||
-                            (characters[ii-1] && !characters[ii-1][jj].activeState()) ||
-                            (characters[ii+1] && !characters[ii+1][jj].activeState())
-                        ) {
-                            possibleCollisionList.push({ii: ii, jj: jj});
-                        }
-                    }
-                }
-                if (ii === characters.length-1) {
+            // for (let ii = 0; ii < characters.length; ii += 1) {
+            //     for (let jj = 0; jj < characters[0].length; jj += 1) {
+            //         if (ii === 0 && characters[ii][jj].activeState()) {
+            //             possibleCollisionList.push({ii: ii, jj: jj});
+            //         }
+            //         else {
+            //             if (
+            //                 (characters[ii][jj-1] && !characters[ii][jj-1].activeState()) ||
+            //                 (characters[ii][jj+1] && !characters[ii][jj+1].activeState()) ||
+            //                 (characters[ii-1] && !characters[ii-1][jj].activeState()) ||
+            //                 (characters[ii+1] && !characters[ii+1][jj].activeState())
+            //             ) {
+            //                 possibleCollisionList.push({ii: ii, jj: jj});
+            //             }
+            //         }
+            //     }
+            //     if (ii === characters.length-1) {
 
-                    console.log(possibleCollisionList);
+            //         console.log("PC: ", possibleCollisionList, "first: ", characters[possibleCollisionList[0].ii][possibleCollisionList[0].jj].getDimensions());
+            //     }
+            // }
+            for (let ii = 0; ii < characters.length; ii += 1) {
+                for (let jj = 0; jj < characters[ii].length; jj += 1) {
+                    // if (typeof characters[ii-1] === 'undefined') {
+                    //     possibleCollisionList.push({ii: ii, jj: jj});
+                    // }
+                    // else if (!characters[ii-1][jj].activeState() || (typeof characters[ii+1] !== 'undefined' && !characters[ii+1][jj].activeState())) {
+                    //     possibleCollisionList.push({ii: ii, jj: jj});
+                    // }
+                    // else if ((typeof characters[ii][jj-1] !== 'undefined' && !characters[ii][jj-1].activeState()) || (typeof characters[ii][jj+1] !== 'undefined' && !characters[ii][jj+1].activeState())) {
+                    //     possibleCollisionList.push({ii: ii, jj: jj});
+                    // }
+                    possibleCollisionList.push({ii: ii, jj: jj});
                 }
             }
         }
@@ -288,7 +302,7 @@ var MasterScene = function () {
                     if (characters.ball.checkBrickCollision(characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj])) {
                         characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj].activeState(false);
                         generateCollisionList();
-                        ii = 0;
+                        break;
                     }
                 }
             }

@@ -70,7 +70,7 @@ var CharacterMaster = function () {
 					y: -5
 				},
 				blocksDestroyedCount: 0,
-				speed: 1
+				speed: 2
 			};
 			var dimensions = {
 				loaded_p: false,
@@ -84,29 +84,43 @@ var CharacterMaster = function () {
 
 			this.checkBrickCollision = function (brick) {
 				var brickData = brick.getDimensions();
+				var brickMid = {x: brickData.position.x + brickData.dimensions.brickWidth/2 ,y: brickData.position.y + brickData.dimensions.brickHeight/1};
+				var ballMid = {x: _data.position.x + dimensions.ballWidth/2, y: _data.position.y + dimensions.ballHeight/2};
 				var collision_p = false;
-				console.log(brickData.position.y);
-				if (_data.position.y <= brickData.position.y + brickData.dimensions.brickHeight) {
+				
+				//check bottom of block
+				// if ((_data.position.y <= brickData.position.y + brickData.dimensions.brickHeight) && 
+				if ((Math.abs(ballMid.x - brickMid.x)-15 <= dimensions.ballWidth/2 + brickData.dimensions.brickWidth/2) &&
+					(brickData.position.y <= _data.position.y + dimensions.ballHeight && brickData.position.y + brickData.dimensions.brickHeight >= _data.position.y) &&
+					brick.activeState()
+				) {
+					_data.direction.x = _data.direction.x*-1;
+					// _data.direction.y = Math.abs(_data.direction.y);
+					collision_p = true;
+				}
+				else if ((Math.abs(ballMid.y - brickMid.y)+5 <= dimensions.ballHeight/2 + brickData.dimensions.brickHeight/2) && 
+					(brickData.position.x <= _data.position.x + dimensions.ballWidth && brickData.position.x + brickData.dimensions.brickWidth >= _data.position.x) &&
+					brick.activeState()
+				) {
 					_data.direction.y = _data.direction.y*-1;
+					// _data.direction.y = Math.abs(_data.direction.y);
+					collision_p = true;
 				}
 
-				if (collision_p) {
-					return true;
-				}
-				return false;
+				return collision_p;
 			};
 
 			this.render = function (context, canvasWidth) {
 				if (characterImages['ball'].image.isReady_p) {
 					context.save();
 
-					if (!dimensions.loaded_p) {
-						dimensions.loaded_p = true;
-						dimensions.ytop = _data.position.y;
-						dimensions.ybottom = _data.position.y + dimensions.ballHeight;
-						dimensions.xleft = _data.position.x;
-						dimensions.xright = _data.position.x + dimensions.ballWidth;
-					}
+					// if (!dimensions.loaded_p) {
+						// dimensions.loaded_p = true;
+					dimensions.ytop = _data.position.y;
+					dimensions.ybottom = _data.position.y + dimensions.ballHeight;
+					dimensions.xleft = _data.position.x;
+					dimensions.xright = _data.position.x + dimensions.ballWidth;
+					// }
 
 					context.drawImage(characterImages['ball'].image, _data.position.x, _data.position.y, dimensions.ballWidth, dimensions.ballHeight);
 
@@ -121,8 +135,8 @@ var CharacterMaster = function () {
 				if (_data.position.x + dimensions.ballWidth - 5 >= ballData.canvasWidth || _data.position.x + 5 <= 0) {
 					_data.direction.x = _data.direction.x*-1;
 				}
-				_data.position.x += _data.direction.x;
-				_data.position.y += _data.direction.y;
+				_data.position.x += (_data.direction.x)*_data.speed;
+				_data.position.y += (_data.direction.y)*_data.speed;
 			};
 		},
 
@@ -156,7 +170,7 @@ var CharacterMaster = function () {
 			};
 
 			this.activeState = function (val) {
-				if (val) {
+				if (typeof val !== 'undefined') {
 					_data.isActive_p = val;
 				}
 				else {
@@ -180,7 +194,9 @@ var CharacterMaster = function () {
 						dimensions.xright = _data.position.x + dimensions.brickWidth;
 					}
 
-					context.drawImage(characterImages['brick-' + _data.brickType].image, _data.position.x, _data.position.y, dimensions.brickWidth, dimensions.brickHeight);
+					if (_data.isActive_p) {
+						context.drawImage(characterImages['brick-' + _data.brickType].image, _data.position.x, _data.position.y, dimensions.brickWidth, dimensions.brickHeight);
+					}
 
 					context.restore();
 				}
