@@ -20,6 +20,18 @@
 	background-color: #000;
 }
 
+#brick-canvas {
+	position: absolute;
+	height: 700px;
+	width: 1300px;
+	/*border: 2px solid green;*/
+	top: 10px;
+	left: 50%;
+	margin-left: -650px;
+	pointer-events:none;
+    background:none;
+}
+
 .canvas-container-side {
 	background-color: green;
 	height: 600px;

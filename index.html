@@ -19,13 +19,14 @@
       <canvas id="canvas-main" width=1300 height=700>
         Your browser does not support HTML5!
       </canvas>
+      <canvas id="brick-canvas" width=1300 height=700></canvas>
     </div>
     </div>
     <script>
       var SOUNDBOARD = new SoundPool();
       var CM = new CharacterMaster()
       var GAMELOOP = new GameLoop();
-      SOUNDBOARD.playSound({type: 'GameMusic', volume: 0.05, loop: true});
+      // SOUNDBOARD.playSound({type: 'GameMusic', volume: 0.05, loop: true});
       GAMELOOP.init();
     </script>
   </body>

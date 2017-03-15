@@ -51,13 +51,79 @@ var CharacterMaster = function () {
 		},
 		'one': {
 			image: createImage('static/images/one-text.png')
+		},
+		'ball': {
+			image: createImage('static/images/ball.png')
 		}
 	};
 
 	var CharacterObj = {
 		//============================================================// B A L L
 		ball: function (data) {
-			this.type = data.type;
+			var _data = {
+				position: {
+					x: data.x-25,
+					y: data.y
+				},
+				direction: {
+					x: Math.floor(Math.random()*(5-(-5)+1)+(-5)),
+					y: -5
+				},
+				blocksDestroyedCount: 0,
+				speed: 1
+			};
+			var dimensions = {
+				loaded_p: false,
+				ballHeight: 50,
+				ballWidth: 50,
+				ytop: undefined,
+				ybottom: undefined,
+				xleft: undefined,
+				xright: undefined
+			};
+
+			this.checkBrickCollision = function (brick) {
+				var brickData = brick.getDimensions();
+				var collision_p = false;
+				console.log(brickData.position.y);
+				if (_data.position.y <= brickData.position.y + brickData.dimensions.brickHeight) {
+					_data.direction.y = _data.direction.y*-1;
+				}
+
+				if (collision_p) {
+					return true;
+				}
+				return false;
+			};
+
+			this.render = function (context, canvasWidth) {
+				if (characterImages['ball'].image.isReady_p) {
+					context.save();
+
+					if (!dimensions.loaded_p) {
+						dimensions.loaded_p = true;
+						dimensions.ytop = _data.position.y;
+						dimensions.ybottom = _data.position.y + dimensions.ballHeight;
+						dimensions.xleft = _data.position.x;
+						dimensions.xright = _data.position.x + dimensions.ballWidth;
+					}
+
+					context.drawImage(characterImages['ball'].image, _data.position.x, _data.position.y, dimensions.ballWidth, dimensions.ballHeight);
+
+					context.restore();
+				}
+			};
+
+			this.update = function (ballData) {
+				if (_data.position.y + dimensions.ballHeight - 5 >= ballData.canvasHeight || _data.position.y + 5 <= 0) {
+					_data.direction.y = _data.direction.y*-1;
+				}
+				if (_data.position.x + dimensions.ballWidth - 5 >= ballData.canvasWidth || _data.position.x + 5 <= 0) {
+					_data.direction.x = _data.direction.x*-1;
+				}
+				_data.position.x += _data.direction.x;
+				_data.position.y += _data.direction.y;
+			};
 		},
 
 		//============================================================// B R I C K
@@ -80,18 +146,29 @@ var CharacterMaster = function () {
 				xright: undefined
 			};
 
+			// this.inCollisionList_p = false;
+			this.getDimensions = function () {
+				return {dimensions: dimensions, position: _data.position};
+			};
+
 			this.getBrickType = function () {
 				return _data.brickType;
 			};
-			this.getActiveState = function () {
-				return _data.isActive_p;
+
+			this.activeState = function (val) {
+				if (val) {
+					_data.isActive_p = val;
+				}
+				else {
+					return _data.isActive_p;
+				}
 			};
 
 			this.update = function (ballData) {
 
 			};
 
-			this.render = function (context, canvasWidth, columnIndex, rowIndex) {
+			this.render = function (context, canvasWidth) {
 				if (characterImages['brick-' + _data.brickType].image.isReady_p) {
 					context.save();
 

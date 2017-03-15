@@ -128,7 +128,9 @@ var MasterScene = function () {
     // ======================================================= //
     var scenePlay = function (initialTimestamp) {
         var characters = [];
-        characters.paddle = CM.createCharacter({type: 'paddle', x: canvas.width/2, y: 650, canvasWidth: canvas.width})
+        var possibleCollisionList = [];
+        characters.paddle = CM.createCharacter({type: 'paddle', x: canvas.width/2, y: 650, canvasWidth: canvas.width});
+        characters.ball = CM.createCharacter({type: 'ball', x: canvas.width/2, y: 600, canvasWidth: canvas.width});
         var timeElapsed = 0;
         var totalTimeElapsed = 0;
         var isPlaying_p = false;
@@ -147,6 +149,31 @@ var MasterScene = function () {
                 pressed: false
             }
         };
+
+        function generateCollisionList() {
+            possibleCollisionList = [];
+            for (let ii = 0; ii < characters.length; ii += 1) {
+                for (let jj = 0; jj < characters[0].length; jj += 1) {
+                    if (ii === characters.length - 1 && characters[ii][jj].activeState()) {
+                        possibleCollisionList.push({ii: ii, jj: jj});
+                    }
+                    else {
+                        if (
+                            (characters[ii][jj-1] && !characters[ii][jj-1].activeState()) ||
+                            (characters[ii][jj+1] && !characters[ii][jj+1].activeState()) ||
+                            (characters[ii-1] && !characters[ii-1][jj].activeState()) ||
+                            (characters[ii+1] && !characters[ii+1][jj].activeState())
+                        ) {
+                            possibleCollisionList.push({ii: ii, jj: jj});
+                        }
+                    }
+                }
+                if (ii === characters.length-1) {
+
+                    console.log(possibleCollisionList);
+                }
+            }
+        }
 
         window.addEventListener('keydown', function (event) {
             if (scenes.currentScene === 'play') {
@@ -201,6 +228,9 @@ var MasterScene = function () {
                     characters[ii].push(CM.createCharacter({type: 'brick', brickType: 'yellow', x: xPos, y: 160*.8+rowMult+(canvas.width/14)*.3*3, canvasWidth: canvas.width}));
                 }
             }
+            if (ii === 7) {
+                generateCollisionList();
+            }
         }
 
         this.resetScene = function (newTimeStamp) {
@@ -222,6 +252,7 @@ var MasterScene = function () {
 
             // render the paddle
             characters.paddle.render(context, canvas.width);
+            characters.ball.render(context, canvas.width);
 
             // render the countdown
             if (!isPlaying_p) {
@@ -250,6 +281,16 @@ var MasterScene = function () {
             totalTimeElapsed = newTimeStamp - totalTimeElapsed;
             if (isPlaying_p) {
                 characters.paddle.update({canvasWidth: canvas.width, left: controlsData.ArrowLeft.pressed, right: controlsData.ArrowRight.pressed})
+                characters.ball.update({canvasWidth: canvas.width, canvasHeight: canvas.height});
+
+                // check to see if the ball is colliding with any of the bricks.
+                for (let ii = 0; ii < possibleCollisionList.length; ii += 1) {
+                    if (characters.ball.checkBrickCollision(characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj])) {
+                        characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj].activeState(false);
+                        generateCollisionList();
+                        ii = 0;
+                    }
+                }
             }
         };
         this.handleInputScene = function () {
