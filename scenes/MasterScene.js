@@ -305,6 +305,8 @@ var MasterScene = function () {
                         break;
                     }
                 }
+
+                characters.ball.checkPaddleCollision(characters.paddle);
             }
         };
         this.handleInputScene = function () {

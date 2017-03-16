@@ -88,14 +88,11 @@ var CharacterMaster = function () {
 				var ballMid = {x: _data.position.x + dimensions.ballWidth/2, y: _data.position.y + dimensions.ballHeight/2};
 				var collision_p = false;
 				
-				//check bottom of block
-				// if ((_data.position.y <= brickData.position.y + brickData.dimensions.brickHeight) && 
 				if ((Math.abs(ballMid.x - brickMid.x)-15 <= dimensions.ballWidth/2 + brickData.dimensions.brickWidth/2) &&
 					(brickData.position.y <= _data.position.y + dimensions.ballHeight && brickData.position.y + brickData.dimensions.brickHeight >= _data.position.y) &&
 					brick.activeState()
 				) {
 					_data.direction.x = _data.direction.x*-1;
-					// _data.direction.y = Math.abs(_data.direction.y);
 					collision_p = true;
 				}
 				else if ((Math.abs(ballMid.y - brickMid.y)+5 <= dimensions.ballHeight/2 + brickData.dimensions.brickHeight/2) && 
@@ -103,24 +100,31 @@ var CharacterMaster = function () {
 					brick.activeState()
 				) {
 					_data.direction.y = _data.direction.y*-1;
-					// _data.direction.y = Math.abs(_data.direction.y);
 					collision_p = true;
 				}
 
 				return collision_p;
 			};
 
+			this.checkPaddleCollision = function (paddle) {
+				var paddleData = paddle.getDimensions();
+				if (dimensions.xright >= paddleData.position.x && 
+					dimensions.xleft <= paddleData.position.x + paddleData.dimensions.paddleWidth && 
+					(dimensions.ybottom >= paddleData.position.y && dimensions.ybottom <= paddleData.position.y + paddleData.dimensions.paddleHeight)
+				) {
+					_data.direction.y = Math.abs(_data.direction.y)*-1;
+					_data.direction.x = (((_data.position.x+dimensions.ballWidth/2)-(paddleData.position.x+paddleData.dimensions.paddleWidth/2))/(paddleData.dimensions.paddleWidth))*10*(_data.speed*0.5);
+				} 
+			};
+
 			this.render = function (context, canvasWidth) {
 				if (characterImages['ball'].image.isReady_p) {
 					context.save();
 
-					// if (!dimensions.loaded_p) {
-						// dimensions.loaded_p = true;
 					dimensions.ytop = _data.position.y;
 					dimensions.ybottom = _data.position.y + dimensions.ballHeight;
 					dimensions.xleft = _data.position.x;
 					dimensions.xright = _data.position.x + dimensions.ballWidth;
-					// }
 
 					context.drawImage(characterImages['ball'].image, _data.position.x, _data.position.y, dimensions.ballWidth, dimensions.ballHeight);
 
@@ -221,6 +225,10 @@ var CharacterMaster = function () {
 				}
 			};
 
+			this.getDimensions = function () {
+				return {dimensions: dimensions, position: _data.position};
+			};
+
 			this.update = function (updateData) {
 				if (_data.position.x + dimensions.paddleWidth < updateData.canvasWidth) {
 					if (updateData.right) {
@@ -309,7 +317,6 @@ var CharacterMaster = function () {
 						}
 						isHover_p = true;
 						context.drawImage(characterImages[_data.imageText].imageAlt, position.x - characterImages[_data.imageText].image.width/2, position.y);
-						// context.drawImage(characterImages[_data.imageText].imageAlt, position.x-(characterImages[_data.imageText].image.width*(function () {if(_data.alignCenter) return 0.5; return 0;}())), position.y);
 					}
 					else {
 						isHover_p = false;
