@@ -82,12 +82,16 @@ var CharacterMaster = function () {
 				xright: undefined
 			};
 
+			this.getDimensions = function () {
+				return {position: _data.position, direction: _data.direction, dimensions: dimensions};
+			};
+
 			this.checkBrickCollision = function (brick) {
 				var brickData = brick.getDimensions();
 				var brickMid = {x: brickData.position.x + brickData.dimensions.brickWidth/2 ,y: brickData.position.y + brickData.dimensions.brickHeight/1};
 				var ballMid = {x: _data.position.x + dimensions.ballWidth/2, y: _data.position.y + dimensions.ballHeight/2};
 				var collision_p = false;
-				
+
 				if ((Math.abs(ballMid.x - brickMid.x)-15 <= dimensions.ballWidth/2 + brickData.dimensions.brickWidth/2) &&
 					(brickData.position.y <= _data.position.y + dimensions.ballHeight && brickData.position.y + brickData.dimensions.brickHeight >= _data.position.y) &&
 					brick.activeState()
