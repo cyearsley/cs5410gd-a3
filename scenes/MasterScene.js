@@ -127,10 +127,12 @@ var MasterScene = function () {
     //
     // ======================================================= //
     var scenePlay = function (initialTimestamp) {
+        var playerLives = 3;
         var characters = [];
         var possibleCollisionList = [];
         characters.paddle = CM.createCharacter({type: 'paddle', x: canvas.width/2, y: 650, canvasWidth: canvas.width});
         characters.ball = CM.createCharacter({type: 'ball', x: canvas.width/2, y: 550, canvasWidth: canvas.width});
+        characters.paddleLives = CM.createCharacter({type: 'paddleLife'});
         var timeElapsed = 0;
         var totalTimeElapsed = 0;
         var isPlaying_p = false;
@@ -274,6 +276,7 @@ var MasterScene = function () {
                 context.strokeStyle = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
                 context.stroke();
             }
+            characters.paddleLives.render(context, canvas.height, playerLives);
         };
         this.updateScene = function (newTimeStamp) {
             if (resetScene_p) {
@@ -295,6 +298,13 @@ var MasterScene = function () {
                 }
 
                 characters.ball.checkPaddleCollision(characters.paddle);
+
+                if (characters.ball.checkIfBallIsDead(canvas.height)) {
+                    playerLives -= 1;
+                    this.resetScene(newTimeStamp);
+                    characters.ball = CM.createCharacter({type: 'ball', x: canvas.width/2, y: 550, canvasWidth: canvas.width});
+                    characters.paddle = CM.createCharacter({type: 'paddle', x: canvas.width/2, y: 650, canvasWidth: canvas.width});
+                }
             }
         };
         this.handleInputScene = function () {

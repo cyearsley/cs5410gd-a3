@@ -40,6 +40,9 @@ var CharacterMaster = function () {
 		'paddle': {
 			image: createImage('static/images/paddle.png')
 		},
+		'paddleLife': {
+			image: createImage('static/images/paddle.png')
+		},
 		'go': {
 			image: createImage('static/images/go-text.png')
 		},
@@ -121,6 +124,13 @@ var CharacterMaster = function () {
 				} 
 			};
 
+			this.checkIfBallIsDead = function (canvasHeight) {
+				if (_data.position.y >= canvasHeight) {
+					return true;
+				}
+				return false;
+			};
+
 			this.render = function (context, canvasWidth) {
 				if (characterImages['ball'].image.isReady_p) {
 					context.save();
@@ -137,7 +147,7 @@ var CharacterMaster = function () {
 			};
 
 			this.update = function (ballData) {
-				if (_data.position.y + dimensions.ballHeight - 5 >= ballData.canvasHeight || _data.position.y + 5 <= 0) {
+				if (_data.position.y + 5 <= 0) {
 					_data.direction.y = _data.direction.y*-1;
 				}
 				if (_data.position.x + dimensions.ballWidth - 5 >= ballData.canvasWidth || _data.position.x + 5 <= 0) {
@@ -259,6 +269,22 @@ var CharacterMaster = function () {
 					}
 
 					context.drawImage(characterImages['paddle'].image, _data.position.x, _data.position.y, dimensions.paddleWidth, dimensions.paddleHeight);
+
+					context.restore();
+				}
+			};
+		},
+
+		paddleLife: function (_data) {
+			var liveWidth = 50;
+			var liveHeight = 15;
+			this.render = function (context, canvasHeight, livesNumber) {
+				if (characterImages['paddleLife'].image.isReady_p) {
+					context.save();
+
+					for (var ii = 0; ii < livesNumber; ii += 1) {
+						context.drawImage(characterImages['paddleLife'].image, 10+(ii*liveWidth), canvasHeight-liveHeight-10, liveWidth, liveHeight);
+					}
 
 					context.restore();
 				}
