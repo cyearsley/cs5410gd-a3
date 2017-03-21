@@ -346,6 +346,10 @@ var MasterScene = function () {
                     this.resetScene(newTimeStamp);
                     characters.ball = CM.createCharacter({type: 'ball', x: canvas.width/2, y: 550, canvasWidth: canvas.width});
                     characters.paddle = CM.createCharacter({type: 'paddle', x: canvas.width/2, y: 650, canvasWidth: canvas.width});
+                    if (playerLives < 0) {
+                        scenes.gameOver = new sceneGameOver(sessionScore, playerLives, totalTimeElapsed);
+                        scenes.currentScene = 'gameOver';
+                    }
                 }
             }
         };
@@ -371,6 +375,31 @@ var MasterScene = function () {
 
     // ======================================================= //
     //
+    // G A M E O V E R - S C E N E
+    //
+    // ======================================================= //
+    var sceneGameOver = function (score, lives, time) {
+        console.log("GAME OVER");
+        var characters = [];
+        var $highScoreInput = $('#highscore-input');
+        var $hsSubmitButton = $('#highscore-submit-button');
+        $highScoreInput.css('visibility', 'visible');
+        $hsSubmitButton.css('visibility', 'visible');
+        $highScoreInput.val('');
+
+        console.log("SCORES: ", score);
+        console.log("LIVES: ", lives);
+        console.log("TIME: ", time);
+        this.init = function () {
+
+        };
+        this.renderScene = function () {};
+        this.updateScene = function () {console.log("updating gameover")};
+        this.handleInputScene = function () {};
+    };
+
+    // ======================================================= //
+    //
     // O P T I O N S - S C E N E
     //
     // ======================================================= //
@@ -387,6 +416,7 @@ var MasterScene = function () {
     var scenes = {
         main: new sceneMain(),
         pause: new scenePause(),
+        gameOver: 'empty',
         play: 'empty',
         hiscores: 'empty',
         options: new sceneOptions(),
