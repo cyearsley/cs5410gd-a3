@@ -73,7 +73,7 @@ var CharacterMaster = function () {
 					y: -5
 				},
 				blocksDestroyedCount: 0,
-				speed: 2
+				speed: 1.5
 			};
 			var dimensions = {
 				loaded_p: false,
@@ -89,6 +89,14 @@ var CharacterMaster = function () {
 				return {position: _data.position, direction: _data.direction, dimensions: dimensions};
 			};
 
+			this.modifyBallSpeed = function (incr) {
+				_data.speed += incr;
+			};
+
+			this.getBallSpeed = function () {
+				return +_data.speed;
+			};
+
 			this.checkBrickCollision = function (brick) {
 				var brickData = brick.getDimensions();
 				var brickMid = {x: brickData.position.x + brickData.dimensions.brickWidth/2 ,y: brickData.position.y + brickData.dimensions.brickHeight/1};
@@ -100,14 +108,14 @@ var CharacterMaster = function () {
 					brick.activeState()
 				) {
 					_data.direction.x = _data.direction.x*-1;
-					collision_p = true;
+					collision_p = brick.getBrickType();
 				}
 				else if ((Math.abs(ballMid.y - brickMid.y)+5 <= dimensions.ballHeight/2 + brickData.dimensions.brickHeight/2) && 
 					(brickData.position.x <= _data.position.x + dimensions.ballWidth && brickData.position.x + brickData.dimensions.brickWidth >= _data.position.x) &&
 					brick.activeState()
 				) {
 					_data.direction.y = _data.direction.y*-1;
-					collision_p = true;
+					collision_p = brick.getBrickType();
 				}
 
 				return collision_p;

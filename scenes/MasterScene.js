@@ -15,6 +15,7 @@ var MasterScene = function () {
         backgroundImage.height = canvas.height;
     };
     context.globalAlpha = 0;
+    context.fillStyle = 'white';
     console.log("canvas width: ", canvas.width);
     CanvasRenderingContext2D.prototype.clear = function() {
         this.save();
@@ -128,6 +129,9 @@ var MasterScene = function () {
     // ======================================================= //
     var scenePlay = function (initialTimestamp) {
         var playerLives = 3;
+        var sessionScore = 0;
+        var consecutiveBrickHit = 0;
+        var totalBrickHit = 0;
         var characters = [];
         var possibleCollisionList = [];
         characters.paddle = CM.createCharacter({type: 'paddle', x: canvas.width/2, y: 650, canvasWidth: canvas.width});
@@ -276,6 +280,13 @@ var MasterScene = function () {
                 context.strokeStyle = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
                 context.stroke();
             }
+            context.font = "30px Verdana";
+            var scoreText = 'Current Score: ' + sessionScore;
+            context.fillText(scoreText, canvas.width - context.measureText(scoreText).width - 10, canvas.height - 10);
+            context.font = "10px Verdana";
+            scoreText = 'Brick Multiplier: ' + characters.ball.getBallSpeed() + 'x';
+            context.fillText(scoreText, canvas.width - context.measureText(scoreText).width - 10, canvas.height - 50);
+
             characters.paddleLives.render(context, canvas.height, playerLives);
         };
         this.updateScene = function (newTimeStamp) {
@@ -290,16 +301,47 @@ var MasterScene = function () {
 
                 // check to see if the ball is colliding with any of the bricks.
                 for (let ii = 0; ii < possibleCollisionList.length; ii += 1) {
-                    if (characters.ball.checkBrickCollision(characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj])) {
+                    var collision_p = characters.ball.checkBrickCollision(characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj])
+                    if (collision_p) {
+                        var multiplier = characters.ball.getBallSpeed();
+                        if (collision_p === 'yellow') {
+                            sessionScore += 10*multiplier;
+                        }
+                        else if (collision_p === 'orange') {
+                            sessionScore += 20*multiplier;
+                        }
+                        else if (collision_p === 'blue') {
+                            sessionScore += 30*multiplier;
+                        }
+                        else if (collision_p === 'green') {
+                            sessionScore += 40*multiplier;
+                        }
+                        consecutiveBrickHit += 1;
+                        totalBrickHit += 1;
+                        if (consecutiveBrickHit === 4) {
+                            characters.ball.modifyBallSpeed(0.5);
+                        }
+                        else if (consecutiveBrickHit === 12) {
+                            characters.ball.modifyBallSpeed(0.4);
+                        }
+                        else if (consecutiveBrickHit === 36) {
+                            characters.ball.modifyBallSpeed(0.35);
+                        }
+                        else if (consecutiveBrickHit === 62) {
+                            characters.ball.modifyBallSpeed(0.3);
+                        }
                         characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj].activeState(false);
                         generateCollisionList();
                         break;
                     }
                 }
 
+                // Check if there is a collision with the paddle and the ball
                 characters.ball.checkPaddleCollision(characters.paddle);
 
+                // Check if the ball has gone pass the paddle; if so, subtract a life and reset the ball and paddle.
                 if (characters.ball.checkIfBallIsDead(canvas.height)) {
+                    consecutiveBrickHit = 0;
                     playerLives -= 1;
                     this.resetScene(newTimeStamp);
                     characters.ball = CM.createCharacter({type: 'ball', x: canvas.width/2, y: 550, canvasWidth: canvas.width});
