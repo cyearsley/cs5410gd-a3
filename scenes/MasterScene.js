@@ -185,6 +185,19 @@ var MasterScene = function () {
             }
         });
 
+        window.addEventListener('keyup', function (event) {
+            if (scenes.currentScene === 'play') {
+                if (isPlaying_p && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+                    if (controlsData[event.key] && controlsData[event.key].pressed == true) {
+                        controlsData[event.key].pressed = false;
+                    }
+                }
+                else if (event.key === 'Escape') {
+                    resetScene_p = true;
+                }
+            }
+        })
+
         function handleThisInput(event) {
             if (scenes.currentScene === 'play') {
                 if (isPlaying_p && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
@@ -372,7 +385,7 @@ var MasterScene = function () {
     // H I G H S C O R E S - S C E N E
     //
     // ======================================================= //
-    var sceneHighscores = function () {
+    var sceneHighscores = function (newHighScoreName) {
         var characters = [CM.createCharacter({type: 'text', textType: 'logo', imageText: 'highscores', x: canvas.width/2, y: 50, alignCenter: true})];
         var topHighScores = sortHighscores(localStorage.cyBTBHSList);
         var initLeft = false;
@@ -381,6 +394,7 @@ var MasterScene = function () {
 
         window.addEventListener('keyup', function (event) {
             if (event.key === 'Escape' && scenes.currentScene === 'highscores') {
+                scenes.main = new sceneMain();
                 scenes.currentScene = 'main';
             }
         });
@@ -395,13 +409,18 @@ var MasterScene = function () {
                     while (scoreText.length < 40) {
                         scoreText = '.' + scoreText;
                     }
-                    scoreText = ii + ') ' + scoreText;
-                    context.font = "30px Verdana"; 
+                    scoreText = (ii+1) + ') ' + scoreText;
+                    context.font = (30 - ii*2) + "px Verdana"; 
+                    if (topHighScores[ii].name == newHighScoreName) {
+                        context.fillStyle = 'green';
+                        context.font = "35px Verdana";
+                    }
                     if (!initLeft) {
                         initLeft = canvas.width/2 - context.measureText(scoreText).width/2;
                     }
 
                     context.fillText(scoreText, initLeft, ii*50+175);
+                    context.fillStyle = 'white';
                 }
             }
             else {
@@ -411,6 +430,7 @@ var MasterScene = function () {
             }
 
             context.fillStyle = 'red';
+            context.font = "30px Verdana";
             context.fillText(exitText, canvas.width/2 - context.measureText(exitText).width/2, canvas.height - 35);
             context.fillStyle = 'white';
         };
@@ -471,7 +491,7 @@ var MasterScene = function () {
             }
             $highScoreInput.css('visibility', 'hidden');
             $hsSubmitButton.css('visibility', 'hidden');
-            scenes.highscores = new sceneHighscores();
+            scenes.highscores = new sceneHighscores($highScoreInput.val());
             scenes.main = new sceneMain();
             scenes.pause = new scenePause();
             scenes.currentScene = 'highscores';
