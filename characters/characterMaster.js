@@ -374,6 +374,58 @@ var CharacterMaster = function () {
 					context.restore();
 				}
 			};
+		},
+
+		particle: function (_data) {
+			var brickDimensions = {
+				width: _data.dimensions.dimensions.brickWidth,
+				height: _data.dimensions.dimensions.brickHeight 
+			}
+			var brickPosition = {
+				x: _data.dimensions.position.x,
+				y: _data.dimensions.position.y
+			}
+			var ySpeed = Math.floor(Math.random() * (10- 5+ 1)) + 5;
+			var life = Math.floor(Math.random() * (50- 10+ 1)) + 10;
+			var minX = brickPosition.x;
+			var maxX = brickPosition.x + brickDimensions.width;
+			var minY = brickPosition.y;
+			var maxY = brickPosition.y + brickDimensions.height;
+			var position = {
+				x: Math.floor(Math.random() * (maxX- minX+ 1)) + minX,
+				y: Math.floor(Math.random() * (maxY- minY+ 1)) + minY,
+				rotation: 0
+			};
+			var dimensions = {
+				wh: 0
+			};
+
+			this.update = function () {
+				position.y += ySpeed;
+				position.rotation += 0.5;
+				life -= 1;
+				dimensions.wh = Math.floor(Math.random() * (5- 1+ 1)) + 1;
+
+			};
+
+			this.getTimeRemaining = function () {
+				return life;
+			};
+
+			this.render = function (context) {
+				context.save();
+				context.translate(position.x + dimensions.wh / 2, position.y + dimensions.wh / 2);
+				context.rotate(position.rotation);
+				context.translate(-(position.x + dimensions.wh / 2), -(position.y + dimensions.wh / 2));
+				
+				context.fillStyle = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+				context.fillRect(position.x, position.y, dimensions.wh, dimensions.wh);
+				
+				context.strokeStyle = '#'+(Math.random()*0xFFFFFF<<0).toString(16);;
+				context.strokeRect(position.x, position.y, dimensions.wh, dimensions.wh);
+
+				context.restore();
+			};
 		}
 	};
 

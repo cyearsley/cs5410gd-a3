@@ -192,6 +192,7 @@ var MasterScene = function () {
         var consecutiveBrickHit = 0;
         var totalBrickHit = 0;
         var characters = [];
+        var particles = [];
         var possibleCollisionList = [];
         characters.paddle = CM.createCharacter({type: 'paddle', x: canvas.width/2, y: 650, canvasWidth: canvas.width});
         characters.ball = CM.createCharacter({type: 'ball', x: canvas.width/2, y: 550, canvasWidth: canvas.width});
@@ -319,6 +320,11 @@ var MasterScene = function () {
         };
 
         this.renderScene = function () {
+            // render particles
+            for (let ii = 0; ii < particles.length; ii += 1) {
+                particles[ii].render(context);
+            }
+
             // render the bricks
             for (let ii = 0; ii < characters.length; ii += 1) {
                 for (let jj = 0; jj < characters[0].length; jj += 1) {
@@ -374,6 +380,14 @@ var MasterScene = function () {
             timeElapsed = newTimeStamp - initialTimestamp;
             totalTimeElapsed = newTimeStamp - totalTimeElapsed;
             if (isPlaying_p) {
+                // update particles
+                for (let ii = 0; ii < particles.length; ii += 1) {
+                    if (particles[ii].getTimeRemaining() < 0) {
+                        particles.splice(ii, 1);
+                    } else {
+                        particles[ii].update();
+                    }
+                }
                 characters.paddle.update({canvasWidth: canvas.width, left: controlsData.ArrowLeft.pressed, right: controlsData.ArrowRight.pressed})
                 characters.ball.update({canvasWidth: canvas.width, canvasHeight: canvas.height});
 
@@ -381,6 +395,9 @@ var MasterScene = function () {
                 for (let ii = 0; ii < possibleCollisionList.length; ii += 1) {
                     var collision_p = characters.ball.checkBrickCollision(characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj])
                     if (collision_p) {
+                        for (let pp = 0; pp < 20; pp += 1) {
+                            particles.push(CM.createCharacter({type: 'particle', dimensions: characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj].getDimensions()}))
+                        }
                         var multiplier = characters.ball.getBallSpeed();
                         if (collision_p === 'yellow') {
                             sessionScore += 10*multiplier;
@@ -419,6 +436,7 @@ var MasterScene = function () {
 
                 // Check if the ball has gone pass the paddle; if so, subtract a life and reset the ball and paddle.
                 if (characters.ball.checkIfBallIsDead(canvas.height) || totalBrickHit >= 112) {
+                    particles = [];
                     if (totalBrickHit < 112) {
                         consecutiveBrickHit = 0;
                         playerLives -= 1;
