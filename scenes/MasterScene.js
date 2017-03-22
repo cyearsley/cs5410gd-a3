@@ -8,6 +8,7 @@ var MasterScene = function () {
     var canvas = $('#canvas-main')[0];
     var context = canvas.getContext('2d');
     var backgroundImage = new Image();
+    var hasPlayed_p = false;
     backgroundImage.src = 'static/images/moon-background.png';
     backgroundImage.onload = function () {
         backgroundImage.ready_p = true;
@@ -184,7 +185,7 @@ var MasterScene = function () {
             }
         });
 
-        window.addEventListener('keyup', function (event) {
+        function handleThisInput(event) {
             if (scenes.currentScene === 'play') {
                 if (isPlaying_p && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
                     if (controlsData[event.key] && controlsData[event.key].pressed == true) {
@@ -201,7 +202,12 @@ var MasterScene = function () {
                 scenes.currentScene = 'play';
                 SOUNDBOARD.playSound({type: 'goBack', volume: 0.5, loop: false});
             }
-        });
+        }
+
+        if (!hasPlayed_p) {
+            window.addEventListener('keyup', handleThisInput);
+            hasPlayed_p = true;
+        }
 
         for (let ii = 0; ii < 8; ii += 1) {
             characters.push([]);
@@ -340,15 +346,18 @@ var MasterScene = function () {
                 characters.ball.checkPaddleCollision(characters.paddle);
 
                 // Check if the ball has gone pass the paddle; if so, subtract a life and reset the ball and paddle.
-                if (characters.ball.checkIfBallIsDead(canvas.height)) {
-                    consecutiveBrickHit = 0;
-                    playerLives -= 1;
-                    this.resetScene(newTimeStamp);
-                    characters.ball = CM.createCharacter({type: 'ball', x: canvas.width/2, y: 550, canvasWidth: canvas.width});
-                    characters.paddle = CM.createCharacter({type: 'paddle', x: canvas.width/2, y: 650, canvasWidth: canvas.width});
-                    if (playerLives < 0) {
+                if (characters.ball.checkIfBallIsDead(canvas.height) || totalBrickHit >= 112) {
+                    if (totalBrickHit < 112) {
+                        consecutiveBrickHit = 0;
+                        playerLives -= 1;
+                        this.resetScene(newTimeStamp);
+                        characters.ball = CM.createCharacter({type: 'ball', x: canvas.width/2, y: 550, canvasWidth: canvas.width});
+                        characters.paddle = CM.createCharacter({type: 'paddle', x: canvas.width/2, y: 650, canvasWidth: canvas.width});
+                    }
+                    if (playerLives < 0 || totalBrickHit >= 112) {
                         scenes.gameOver = new sceneGameOver(sessionScore, playerLives, totalTimeElapsed);
                         scenes.currentScene = 'gameOver';
+                        context.globalAlpha = 0;
                     }
                 }
             }
@@ -364,14 +373,73 @@ var MasterScene = function () {
     //
     // ======================================================= //
     var sceneHighscores = function () {
-        var characters = [];
-        this.init = function () {
+        var characters = [CM.createCharacter({type: 'text', textType: 'logo', imageText: 'highscores', x: canvas.width/2, y: 50, alignCenter: true})];
+        var topHighScores = sortHighscores(localStorage.cyBTBHSList);
+        var initLeft = false;
+        var exitText = 'To exit to the main menu, press Escape (ESC)';
+        var exitScene_p = false;
 
+        window.addEventListener('keyup', function (event) {
+            if (event.key === 'Escape' && scenes.currentScene === 'highscores') {
+                scenes.currentScene = 'main';
+            }
+        });
+
+        this.renderScene = function () {
+            for (let ii = 0; ii < characters.length; ii += 1) {
+                characters[ii].render(context);
+            }
+            if (topHighScores) {
+                for (let ii = 0; ii < topHighScores.length; ii += 1) {
+                    let scoreText = ' ' + topHighScores[ii].name + ' - ' + topHighScores[ii].score;
+                    while (scoreText.length < 40) {
+                        scoreText = '.' + scoreText;
+                    }
+                    scoreText = ii + ') ' + scoreText;
+                    context.font = "30px Verdana"; 
+                    if (!initLeft) {
+                        initLeft = canvas.width/2 - context.measureText(scoreText).width/2;
+                    }
+
+                    context.fillText(scoreText, initLeft, ii*50+175);
+                }
+            }
+            else {
+                context.font = "40px Verdana";
+                let noScoresText = "There are no scores, play to be the first to add a score!"
+                context.fillText(noScoresText, canvas.width/2 - context.measureText(noScoresText).width/2, canvas.height/2);
+            }
+
+            context.fillStyle = 'red';
+            context.fillText(exitText, canvas.width/2 - context.measureText(exitText).width/2, canvas.height - 35);
+            context.fillStyle = 'white';
         };
-        this.renderScene = function () {};
         this.updateScene = function () {console.log("updating highscores")};
         this.handleInputScene = function () {};
     };
+    function sortHighscores (hsStr) {
+        var scores = [];
+        var finalScores = [];
+        if (hsStr !== undefined) {
+            scores = localStorage.cyBTBHSList.split('|');
+            scores.splice(scores.length-1, 1);
+            for (let ii = 0; ii < scores.length; ii += 1) {
+                scores[ii] = JSON.parse(scores[ii]);
+            }
+            while (finalScores.length < 9 && scores.length > 0) {
+                let maxScoreIndex = 0;
+                for (let ii = 0; ii < scores.length; ii += 1) {
+                    if (scores[maxScoreIndex].score < +scores[ii].score) {
+                        maxScoreIndex = ii;
+                    }
+                }
+                finalScores.push(scores[maxScoreIndex]);
+                scores.splice(maxScoreIndex, 1);
+            }
+            return finalScores;
+        }
+        return false;
+    }
 
     // ======================================================= //
     //
@@ -387,13 +455,49 @@ var MasterScene = function () {
         $hsSubmitButton.css('visibility', 'visible');
         $highScoreInput.val('');
 
+        var welcomeText = [];
+        if (lives >= 0) {
+            welcomeText.push('You Win!');
+        }
+        else {
+            welcomeText.push('You Are Out of Lives!');
+        }
+
+        $('#highscore-submit-button').one('click', function (event) {
+            console.log("CLICKED!");
+            localStorage.cyBTBHSList = localStorage.cyBTBHSList || '';
+            if ($highScoreInput.val() !== '') {
+                localStorage.cyBTBHSList = localStorage.cyBTBHSList + '{"name": "'+$highScoreInput.val()+'", "score": '+(+score)+', "time": '+(+time)+'}|';
+            }
+            $highScoreInput.css('visibility', 'hidden');
+            $hsSubmitButton.css('visibility', 'hidden');
+            scenes.highscores = new sceneHighscores();
+            scenes.main = new sceneMain();
+            scenes.pause = new scenePause();
+            scenes.currentScene = 'highscores';
+            context.globalAlpha = 0;
+        });
+
+        welcomeText.push('Your Score Is: ' + score);
+        welcomeText.push('Please Enter Your Name Below (if no name is given, the score will NOT be saved)')
+
         console.log("SCORES: ", score);
         console.log("LIVES: ", lives);
         console.log("TIME: ", time);
         this.init = function () {
 
         };
-        this.renderScene = function () {};
+        this.renderScene = function () {
+            for (let ii = 0; ii < welcomeText.length; ii += 1) {
+                if (ii !== welcomeText.length - 1) {
+                    context.font = "40px Verdana";
+                }
+                else {
+                    context.font = "20px Verdana";   
+                }
+                context.fillText(welcomeText[ii], canvas.width/2 - context.measureText(welcomeText[ii]).width/2, ii*75+100);
+            }
+        };
         this.updateScene = function () {console.log("updating gameover")};
         this.handleInputScene = function () {};
     };
@@ -418,7 +522,7 @@ var MasterScene = function () {
         pause: new scenePause(),
         gameOver: 'empty',
         play: 'empty',
-        hiscores: 'empty',
+        highscores: 'empty',
         options: new sceneOptions(),
         currentScene: 'main'
     };

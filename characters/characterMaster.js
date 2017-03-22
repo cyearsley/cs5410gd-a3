@@ -234,7 +234,7 @@ var CharacterMaster = function () {
 			var dimensions = {
 				loaded_p: false,
 				paddleHeight: (data.canvasWidth/14)*.3,
-				paddleWidth: 175,
+				paddleWidth: 175*3,
 				ytop: undefined,
 				ybottom: undefined,
 				xleft: undefined,
