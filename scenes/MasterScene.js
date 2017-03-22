@@ -9,6 +9,7 @@ var MasterScene = function () {
     var context = canvas.getContext('2d');
     var backgroundImage = new Image();
     var hasPlayed_p = false;
+    var resetScene_p = false;
     backgroundImage.src = 'static/images/moon-background.png';
     backgroundImage.onload = function () {
         backgroundImage.ready_p = true;
@@ -198,7 +199,6 @@ var MasterScene = function () {
         var timeElapsed = 0;
         var totalTimeElapsed = 0;
         var isPlaying_p = false;
-        var resetScene_p = false;
         var countDownTimer = {
             'go': CM.createCharacter({type: 'text', textType: 'label', imageText: 'go', x: canvas.width/2, y: 180, alignCenter: true}),
             'three': CM.createCharacter({type: 'text', textType: 'label', imageText: 'three', x: canvas.width/2, y: 200, alignCenter: true}),
