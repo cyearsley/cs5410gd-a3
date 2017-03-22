@@ -398,6 +398,9 @@ var MasterScene = function () {
                         for (let pp = 0; pp < 20; pp += 1) {
                             particles.push(CM.createCharacter({type: 'particle', dimensions: characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj].getDimensions()}))
                         }
+                        if (characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj].getBrickType() === 'green') {
+                            characters.paddle.halfPaddleWidth();
+                        }
                         var multiplier = characters.ball.getBallSpeed();
                         if (collision_p === 'yellow') {
                             sessionScore += 10*multiplier;

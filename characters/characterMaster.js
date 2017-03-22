@@ -245,7 +245,7 @@ var CharacterMaster = function () {
 			var dimensions = {
 				loaded_p: false,
 				paddleHeight: (data.canvasWidth/14)*.3,
-				paddleWidth: 175*3,
+				paddleWidth: 250,
 				ytop: undefined,
 				ybottom: undefined,
 				xleft: undefined,
@@ -255,6 +255,12 @@ var CharacterMaster = function () {
 				position: {
 					x: data.x - (dimensions.paddleWidth/2),
 					y: data.y
+				}
+			};
+
+			this.halfPaddleWidth = function () {
+				if (dimensions.paddleWidth > 249) {
+					dimensions.paddleWidth /= 2;
 				}
 			};
 
