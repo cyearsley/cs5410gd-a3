@@ -113,14 +113,70 @@ var MasterScene = function () {
     //
     // ======================================================= //
     var scenePause = function () {
-        var characters = [];
+        var characters = [
+            CM.createCharacter({type: 'text', textType: 'logo', imageText: 'paused', x: canvas.width/2, y: 50, alignCenter: true}),
+            CM.createCharacter({type: 'text', textType: 'button', imageText: 'resume', x: canvas.width/2, y: 250, alignCenter: true}),
+            CM.createCharacter({type: 'text', textType: 'button', imageText: 'exit', x: canvas.width/2, y: 450, alignCenter: true})
+        ];
+        var mousePosition = {
+            x: undefined,
+            y: undefined
+        };
+        var clickingObj = {
+            hasClicked_p: false,
+            x: undefined,
+            y: undefined
+        };
+        var currentTimestamp = undefined;
+        canvas.addEventListener('mousemove', function(evt) {
+            var rect = canvas.getBoundingClientRect();
+            mousePosition.x = evt.clientX - rect.left;
+            mousePosition.y = evt.clientY - rect.top;
+        }, false);
+        canvas.addEventListener('click', function (event) {
+            clickingObj.hasClicked_p = true;
+            clickingObj.x = event.clientX;
+            clickingObj.y = event.clientY;
+        }, false);
         // create the characters
         this.init = function () {
 
         };
-        this.renderScene = function () {};
-        this.updateScene = function () {};
-        this.handleInputScene = function () {};
+        this.renderScene = function () {
+            for (let ii = 0; ii < characters.length; ii += 1) {
+                characters[ii].render(context);
+            }
+        };
+        this.updateScene = function (timestamp) {
+            currentTimestamp = timestamp;
+            for (index in characters) {
+                characters[index].update(mousePosition.x, mousePosition.y);
+            }
+        };
+        this.handleInputScene = function () {
+            for (index in characters) {
+                if (clickingObj.hasClicked_p) {
+                    var response = characters[index].handleClick();
+                    if (response) {
+                        if (characters[index].imageText === 'resume') {
+                            SOUNDBOARD.playSound({type: 'startPlay', volume: 0.25, loop: false});
+                        }
+                        else {
+                            SOUNDBOARD.playSound({type: 'selectOption', volume: 0.25, loop: false});
+                        }
+                        context.globalAlpha = 0;
+                    }
+                    if (response == 'resume') {
+                        scenes.currentScene = 'play';
+                    }
+                    else if (response == 'exit') {
+                        scenes.main = new sceneMain();
+                        scenes.currentScene = 'main';
+                    }
+                }
+            }
+            clickingObj.hasClicked_p = false;
+        };
     };
 
     // ======================================================= //
@@ -129,6 +185,7 @@ var MasterScene = function () {
     //
     // ======================================================= //
     var scenePlay = function (initialTimestamp) {
+        console.log("initialTimestamp", initialTimestamp);
         var playerLives = 3;
         var sessionScore = 0;
         var consecutiveBrickHit = 0;
@@ -192,9 +249,6 @@ var MasterScene = function () {
                         controlsData[event.key].pressed = false;
                     }
                 }
-                else if (event.key === 'Escape') {
-                    resetScene_p = true;
-                }
             }
         })
 
@@ -206,15 +260,18 @@ var MasterScene = function () {
                     }
                 }
                 else if (event.key === 'Escape') {
+                    console.log("PRESSING ESC - ", resetScene_p);
                     resetScene_p = true;
                     SOUNDBOARD.playSound({type: 'selectOption', volume: 0.5, loop: false});
+                    scenes.pause = new scenePause();
                     scenes.currentScene = 'pause';
                 }
             }
-            else if (event.key === 'Escape' && scenes.currentScene === 'pause') {
-                scenes.currentScene = 'play';
-                SOUNDBOARD.playSound({type: 'goBack', volume: 0.5, loop: false});
-            }
+            // else if (event.key === 'Escape' && scenes.currentScene === 'pause') {
+            //     scenes.currentScene = 'play';
+            //     resetScene_p = true;
+            //     SOUNDBOARD.playSound({type: 'goBack', volume: 0.5, loop: false});
+            // }
         }
 
         if (!hasPlayed_p) {
@@ -252,6 +309,7 @@ var MasterScene = function () {
         }
 
         this.resetScene = function (newTimeStamp) {
+            console.log("RESET SCENE");
             initialTimestamp = newTimeStamp;
             timeElapsed = 0;
             isPlaying_p = false;
@@ -310,6 +368,7 @@ var MasterScene = function () {
         };
         this.updateScene = function (newTimeStamp) {
             if (resetScene_p) {
+                console.log("RESTTING: ", newTimeStamp)
                 this.resetScene(newTimeStamp);
             }
             timeElapsed = newTimeStamp - initialTimestamp;

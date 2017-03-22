@@ -13,6 +13,9 @@ var CharacterMaster = function () {
 		'btb': {
 			image: createImage('static/images/btb-text.png')
 		},
+		'paused': {
+			image: createImage('static/images/paused-text.png')	
+		},
 		'start': {
 			image: createImage('static/images/start-text.png'),
 			imageAlt: createImage('static/images/start-text-selected.png')
@@ -24,6 +27,14 @@ var CharacterMaster = function () {
 		'options': {
 			image: createImage('static/images/options-text.png'),
 			imageAlt: createImage('static/images/options-text-selected.png')
+		},
+		'resume': {
+			image: createImage('static/images/resume-text.png'),
+			imageAlt: createImage('static/images/resume-text-selected.png')
+		},
+		'exit': {
+			image: createImage('static/images/exit-text.png'),
+			imageAlt: createImage('static/images/exit-text-selected.png')
 		},
 		'brick-yellow': {
 			image: createImage('static/images/brick-yellow.png')
