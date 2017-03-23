@@ -391,7 +391,7 @@ var CharacterMaster = function () {
 				x: _data.dimensions.position.x,
 				y: _data.dimensions.position.y
 			}
-			var ySpeed = Math.floor(Math.random() * (10- 5+ 1)) + 5;
+			var ySpeed = Math.floor(Math.random() * (2- 1+ 1)) + 1;
 			var life = Math.floor(Math.random() * (50- 10+ 1)) + 10;
 			var minX = brickPosition.x;
 			var maxX = brickPosition.x + brickDimensions.width;

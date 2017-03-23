@@ -84,10 +84,10 @@ var MasterScene = function () {
                     var response = characters[index].handleClick();
                     if (response) {
                         if (characters[index].imageText === 'start') {
-                            SOUNDBOARD.playSound({type: 'startPlay', volume: 0.25, loop: false});
+                            SOUNDBOARD.playSound({type: 'startPlay', volume: 1, loop: false, cut_p: false});
                         }
                         else {
-                            SOUNDBOARD.playSound({type: 'selectOption', volume: 0.25, loop: false});
+                            SOUNDBOARD.playSound({type: 'selectOption', volume: 1, loop: false, cut_p: false});
                         }
                         context.globalAlpha = 0;
                     }
@@ -160,10 +160,10 @@ var MasterScene = function () {
                     var response = characters[index].handleClick();
                     if (response) {
                         if (characters[index].imageText === 'resume') {
-                            SOUNDBOARD.playSound({type: 'startPlay', volume: 0.25, loop: false});
+                            SOUNDBOARD.playSound({type: 'startPlay', volume: 1, loop: false, cut_p: false});
                         }
                         else {
-                            SOUNDBOARD.playSound({type: 'selectOption', volume: 0.25, loop: false});
+                            SOUNDBOARD.playSound({type: 'selectOption', volume: 1, loop: false, cut_p: false});
                         }
                         context.globalAlpha = 0;
                     }
@@ -263,7 +263,7 @@ var MasterScene = function () {
                 else if (event.key === 'Escape') {
                     console.log("PRESSING ESC - ", resetScene_p);
                     resetScene_p = true;
-                    SOUNDBOARD.playSound({type: 'selectOption', volume: 0.5, loop: false});
+                    SOUNDBOARD.playSound({type: 'selectOption', volume: 1, loop: false, cut_p: false});
                     scenes.pause = new scenePause();
                     scenes.currentScene = 'pause';
                 }
@@ -271,7 +271,7 @@ var MasterScene = function () {
             // else if (event.key === 'Escape' && scenes.currentScene === 'pause') {
             //     scenes.currentScene = 'play';
             //     resetScene_p = true;
-            //     SOUNDBOARD.playSound({type: 'goBack', volume: 0.5, loop: false});
+            //     SOUNDBOARD.playSound({type: 'goBack', volume: 0.5, loop: false, cut_p: false});
             // }
         }
 
@@ -339,15 +339,19 @@ var MasterScene = function () {
             // render the countdown
             if (!isPlaying_p) {
                 if (timeElapsed > 1000 && timeElapsed < 2000) {
+                    if (timeElapsed < 1200 && timeElapsed > 1000) {SOUNDBOARD.playSound({type: 'tick', volume: 1, loop: false, cut_p: true});}
                     countDownTimer.three.render(context);
                 }
                 else if (timeElapsed > 1000 && timeElapsed < 3000) {
+                    if (timeElapsed > 2000 && timeElapsed < 2100) {SOUNDBOARD.playSound({type: 'tick', volume: 1, loop: false, cut_p: true});}
                     countDownTimer.two.render(context);
                 }
                 else if (timeElapsed > 1000 && timeElapsed < 4000) {
+                    if (timeElapsed > 3000 && timeElapsed < 3100) {SOUNDBOARD.playSound({type: 'tick', volume: 1, loop: false, cut_p: true});}
                     countDownTimer.one.render(context);
                 }
                 else if (timeElapsed > 1000 && timeElapsed < 5000) {
+                    if (timeElapsed > 4000 && timeElapsed < 4100) {SOUNDBOARD.playSound({type: 'tick', volume: 1, loop: false, cut_p: true});}
                     countDownTimer.go.render(context);
                 }
                 else if (timeElapsed > 1000) {
@@ -395,6 +399,7 @@ var MasterScene = function () {
                 for (let ii = 0; ii < possibleCollisionList.length; ii += 1) {
                     var collision_p = characters.ball.checkBrickCollision(characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj])
                     if (collision_p) {
+                        SOUNDBOARD.playSound({type: 'brickhit', volume: 0.5, loop: false, cut_p: false});
                         for (let pp = 0; pp < 20; pp += 1) {
                             particles.push(CM.createCharacter({type: 'particle', dimensions: characters[possibleCollisionList[ii].ii][possibleCollisionList[ii].jj].getDimensions()}))
                         }
