@@ -74,9 +74,9 @@ var MasterScene = function () {
 
             // Render Credits
             context.font = "30px Verdana";
-            var creditText = ["Game Created By: Caleb Yearsley", "All Game Art/Music/Sounds: http://opengameart.org/"];
+            var creditText = ["Game Created By: Caleb Yearsley", "All Game Art/Music/Sounds: http://opengameart.org/", "All Graphic Fonts Generated From: https://cooltext.com/"];
             for (let ii = 0; ii < creditText.length; ii += 1) {
-                context.fillText(creditText[ii], canvas.width/2 - context.measureText(creditText[ii]).width/2, 500 + ii*100);
+                context.fillText(creditText[ii], canvas.width/2 - context.measureText(creditText[ii]).width/2, 500 + ii*90);
             }
         };
         this.updateScene = function (timestamp) {
