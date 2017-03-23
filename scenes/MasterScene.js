@@ -41,8 +41,8 @@ var MasterScene = function () {
         var characters = [
             CM.createCharacter({type: 'text', name: 'testing', textType: 'button', imageText: 'start', x: canvas.width/2, y: 200, alignCenter: true}),
             CM.createCharacter({type: 'text', name: 'testing2', textType: 'logo', imageText: 'btb', x: canvas.width/2, y: 50, alignCenter: true}),
-            CM.createCharacter({type: 'text', name: 'testing2', textType: 'button', imageText: 'highscores', x: canvas.width/2, y: 325, alignCenter: true}),
-            CM.createCharacter({type: 'text', name: 'testing2', textType: 'button', imageText: 'options', x: canvas.width/2, y: 450, alignCenter: true})
+            CM.createCharacter({type: 'text', name: 'testing2', textType: 'button', imageText: 'highscores', x: canvas.width/2, y: 325, alignCenter: true})
+            // CM.createCharacter({type: 'text', name: 'testing2', textType: 'button', imageText: 'options', x: canvas.width/2, y: 450, alignCenter: true})
         ];
         var mousePosition = {
             x: undefined,
@@ -70,6 +70,13 @@ var MasterScene = function () {
         this.renderScene = function () {
             for (index in characters) {
                 characters[index].render(context);
+            }
+
+            // Render Credits
+            context.font = "30px Verdana";
+            var creditText = ["Game Created By: Caleb Yearsley", "All Game Art/Music/Sounds: http://opengameart.org/"];
+            for (let ii = 0; ii < creditText.length; ii += 1) {
+                context.fillText(creditText[ii], canvas.width/2 - context.measureText(creditText[ii]).width/2, 500 + ii*100);
             }
         };
         this.updateScene = function (timestamp) {
@@ -475,12 +482,17 @@ var MasterScene = function () {
         var topHighScores = sortHighscores(localStorage.cyBTBHSList);
         var initLeft = false;
         var exitText = 'To exit to the main menu, press Escape (ESC)';
+        var resetHSText = 'To RESET highscores, press the space key'
         var exitScene_p = false;
 
         window.addEventListener('keyup', function (event) {
             if (event.key === 'Escape' && scenes.currentScene === 'highscores') {
                 scenes.main = new sceneMain();
                 scenes.currentScene = 'main';
+            }
+            else if (event.key === ' ' && scenes.currentScene === 'highscores') {
+                scenes.highscores = new sceneHighscores();
+                localStorage.clear();
             }
         });
 
@@ -516,7 +528,8 @@ var MasterScene = function () {
 
             context.fillStyle = 'red';
             context.font = "30px Verdana";
-            context.fillText(exitText, canvas.width/2 - context.measureText(exitText).width/2, canvas.height - 35);
+            context.fillText(exitText, canvas.width/2 - context.measureText(exitText).width/2, canvas.height - 70);
+            context.fillText(resetHSText, canvas.width/2 - context.measureText(resetHSText).width/2, canvas.height - 10);
             context.fillStyle = 'white';
         };
         this.updateScene = function () {console.log("updating highscores")};
