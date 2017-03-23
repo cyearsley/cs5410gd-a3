@@ -1,24 +1,48 @@
-This submission includes the following:
-1) Display of the bricks, including the correct colors.
-2) Ball movement, bouncing, and ability to destroy bricks.
-3) Paddle display, movement, and ability to hit the ball.
+Name: Caleb Yearsley
+A#: A02062571
+Class: CS5410 - Game Dev
 
-OTHERS:
-4) Menu (mouse over options and click to select)
-	Only the main menu and play 'scenes' are currently rendered.
-5) When the user presses ESC, the pause 'scene' is rendered.
-	Press ESC again to exit the pause 'scene'.
+All content of this submitted application meets the rubric's criteria.
+The game is pretty simple, but in case you are interested, here is a tutorial on the application:
 
-EXTRAS:
-1) Cool sounds!
-2) An arrow indicating where the ball will be going.
+==================================================================================================
 
-HOW TO USE:
-When opening the index.html file (in the browser), you will automatically be placed
-at the main menu. Do the following to navigate/use the game:
-1) hover mouse and click options on screen.
-	Only the play 'scene', and menu 'scene' are rendered.
-2) When in the play 'scene':
-	i) use the left and right arrows to move paddle.
-	ii) press ESC to go to the pause menu (nothing there now.)
-		I) press ESC to exit the pause menu
+How to operate the application:
+1) To play the game:
+In order to play, simply open the index.html file located in the root of this directory.
+
+2) View Highscores:
+While on the main menu, hover over and click the 'Highscores' label.
+	OR
+Finish a game, [enter your name,] and submit the score.
+
+3) Reset Highscores:
+While on the highscores scene, press the Space Bar.
+
+3) To start playing the game:
+While on the main menu, hover over and click the 'Start' label.
+
+4) How to play the game:
+After the countdown, use the left and right arrow keys to remove the paddle.
+When a green brick is hit, the paddle width will be halfed.
+The ball will speed up when 4, 12, 36, and 62 bricks have been destroyed.
+The score of each block is the following:
+	i) yellow: 10*multiplier
+	ii) orange: 20*multiplier
+	iii) blue: 30*multiplier
+	iv) green: 40*multiplier
+		*** Where the multiplier is dependent on the speed of the ball.
+		This code is found starting on line 416 - 442 in MasterScene.js
+
+5) How to pause the game:
+While in the gameplay scene, simply press ESC (escape) to pause the game (does NOT reset the game.)
+
+6) How to resume gameplay:
+While on the pause scene, hover over and click the 'resume' label.
+
+7) How to exit the game session (resets the game session)
+While on the pause scene, hover over and click the 'Exist-Session' label.
+
+8) How to submit a score:
+In gameplay, after depleting all lives OR destroying all bricks you will be directed to
+	a scene that allows you to enter a name, and submit the score by clicking the 'submit' button.
